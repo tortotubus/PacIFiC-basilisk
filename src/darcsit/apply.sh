@@ -6,7 +6,8 @@ for date in $dates; do
     for f in `darcs changes -v --match "date $date" |        \
     	grep -E '^    (add|rm)file ' | \
     	sed -E 's/^    (add|rm)file //g'`; do
-	rm -f `darcs show repo | grep Root | awk '{print $2}'`/`dirname $f`/Makefile.tests
+	dir=`darcs show repo | grep Root | awk '{print $2}'`/`dirname $f`
+	rm -f $dir/Makefile.tests $dir/Makefile.deps $dir/*.d
     done
 done
 darcs push -a -q wiki@shell.basilisk.fr:wiki
