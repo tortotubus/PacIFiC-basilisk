@@ -19,9 +19,14 @@ typedef void PyObject;
 ## From MPI */
 
 typedef void MPI_Datatype, MPI_Request, MPI_Comm, MPI_Op, MPI_Aint;
-typedef int MPI_Status;
+typedef int MPI_Status, MPI_File;
 typedef long long MPI_Offset;
 typedef struct MPIR_Info *MPI_Info;
+
+/** 
+# From HDF5 */
+
+typedef void hid_t, hsize_t, herr_t, H5L_info_t;
 
 /**
 ## From OpenGL */
