@@ -14,6 +14,7 @@ BuildRequires:  cmake-rpm-macros
 
 BuildRequires:  cmake >= 3.20
 BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  make
  
 %description

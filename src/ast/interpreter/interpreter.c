@@ -172,10 +172,11 @@ void * message (const Ast * scope, const Ast * n, const char * msg, int level, S
     AstTerminal * t = ast_left_terminal (n);
     char * s = ast_str_append (n, NULL);
     fprintf (stderr, "%s:%d: %s (interpreter): ", t->file, t->line,
-	     level == error_verbosity ? "error" :
-	     level == warning_verbosity ? "warning" :
-	     "info");
-    fprintf (stderr, msg, ast_crop_before (s));
+       level == error_verbosity ? "error" :
+       level == warning_verbosity ? "warning" :
+       "info");
+    fprintf (stderr, "%s", msg);
+    fprintf (stderr, "%s\n", ast_crop_before (s));
     free (s);
     int ret;
     kh_put (INT64, ((StackData *)stack_get_data (stack))->messages, (long) n, &ret);
@@ -421,6 +422,7 @@ int ast_base_type_size (const Ast * type)
   default:
     assert (false);
   }
+  return -1;
 }
 
 int (* ast_type_size) (const Ast *) = ast_base_type_size;
@@ -643,31 +645,31 @@ Value * array_member_value (Ast * n, Value * array, int index, int unset, Stack 
     value->data.start = p.start;
     value->data.size = p.size;
     if (p.start && // fixme: p.start should always be defined
-	(data < p.start || data + value->size > p.start + p.size)) {
+  (data < p.start || data + value->size > p.start + p.size)) {
 #if 0      
       fprintf (stderr, "data: %p, p.start: %p, p.size: %d\n", data, p.start, p.size);
       display_value (array);
       display_value (value);
 #endif
       if (unset == 2)
-	return NULL;
+  return NULL;
       else if (!unset)
-	return message (NULL, n, data < p.start ?
-			"array index underflow in '%s'\n" :
-			"array index overflow in '%s'\n", error_verbosity, stack);	
+  return message (NULL, n, data < p.start ?
+      "array index underflow in '%s'\n" :
+      "array index overflow in '%s'\n", error_verbosity, stack);	
       else {
 
-	/**
-	If the index is unset and there is an underflow or overflow, we
-	return the first element of the array. */
+  /**
+  If the index is unset and there is an underflow or overflow, we
+  return the first element of the array. */
 
-	data -= index*value->size;
-	if (data < p.start || data + value->size > p.start + p.size)
-	  return message (NULL, n, data < p.start ?
-			  "array index underflow in '%s'\n" :
-			  "array index overflow in '%s'\n", error_verbosity, stack);	
-	else
-	  value->data.p = data;
+  data -= index*value->size;
+  if (data < p.start || data + value->size > p.start + p.size)
+    return message (NULL, n, data < p.start ?
+        "array index underflow in '%s'\n" :
+        "array index overflow in '%s'\n", error_verbosity, stack);	
+  else
+    value->data.p = data;
       }
     }
   }
@@ -684,7 +686,7 @@ Value * array_member_value (Ast * n, Value * array, int index, int unset, Stack 
     value->dimension = *(array->dimension + 1) >= 0 ? array->dimension + 1 : NULL;
   if (value_flags (array) & unset)
     unset_value (value, stack);
-  return value;
+  return value == NULL ? NULL : value;
 }
 
 static
@@ -818,8 +820,6 @@ Value * pointer_unary_operation (Ast * n, Ast * op, Value * a, Stack * stack)
     return not_implemented (NULL, n, stack);
     
   }
-
-  return NULL;
 }
 
 static
@@ -1416,7 +1416,7 @@ Ast * direct_declarator_type (Ast * direct_declarator, Dimensions * d, Stack * s
   if (direct_declarator->sym == sym_struct_or_union_specifier)
     return direct_declarator;
   else if (ast_schema (direct_declarator->parent, sym_direct_declarator,
-		       1, token_symbol ('('))) {    
+           1, token_symbol ('('))) {    
     // Function declaration
     if (!d->pointer)
       d->pointer = 1;
@@ -1426,29 +1426,27 @@ Ast * direct_declarator_type (Ast * direct_declarator, Dimensions * d, Stack * s
     // Standard declaration
     Ast * specifiers = NULL;
     if (ast_schema (ast_ancestor (direct_declarator, 2), sym_init_declarator,
-		    0, sym_declarator))
+        0, sym_declarator))
       specifiers = ast_schema (ast_parent (direct_declarator, sym_declaration), sym_declaration,
-			       0, sym_declaration_specifiers);
+             0, sym_declaration_specifiers);
     else if (ast_schema (ast_ancestor (direct_declarator, 2), sym_struct_declarator,
-			 0, sym_declarator))
+       0, sym_declarator))
       specifiers = ast_schema (ast_parent (direct_declarator, sym_struct_declaration),
-			       sym_struct_declaration,
-			       0, sym_specifier_qualifier_list);
+             sym_struct_declaration,
+             0, sym_specifier_qualifier_list);
     else if ((specifiers = ast_schema (ast_ancestor (direct_declarator, 2),
-				       sym_forin_declaration_statement,
-				       2, sym_declaration_specifiers)))
+               sym_forin_declaration_statement,
+               2, sym_declaration_specifiers)))
       ;
     else if ((specifiers = ast_schema (ast_ancestor (direct_declarator, 2),
-				       sym_parameter_declaration,
-				       0, sym_declaration_specifiers)))
+               sym_parameter_declaration,
+               0, sym_declaration_specifiers)))
       ;
     assert (specifiers);
     Ast * type = ast_find (specifiers, sym_types);
     assert (type);
     return type->child[0];
   }
-  ast_print_tree (direct_declarator, stderr, 0, 0, -1);
-  assert (false);
   return NULL;
 }
 
