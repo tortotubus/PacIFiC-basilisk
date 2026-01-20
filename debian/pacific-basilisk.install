@@ -1,3 +1,2 @@
 usr/bin/qcc
-usr/include/basilisk/*
-usr/share/doc/pacific-basilisk/*
+usr/include/basilisk/* 
