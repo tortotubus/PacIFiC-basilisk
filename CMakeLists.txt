@@ -11,6 +11,39 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(BASILISK_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 include(GNUInstallDirs)
 
+#
+
+
+set(CMAKE_CXX_FLAGS_RELWITHWARNINGS "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELWITHWARNINGS "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+ 
+# set(_WARN_FLAGS
+#   "-Werror=return-type \
+#   -Werror=format-security \
+#   -Werror=format=2 \
+#   -Werror=nonnull \
+#   -Werror=array-bounds \
+#   -Werror=stringop-overflow \
+#   -Werror=stringop-truncation \
+#   -Werror=alloc-size-larger-than=9223372036854775807 \
+#   -Werror=address \
+#   -Werror=maybe-uninitialized"
+# )
+ 
+# set(_SANITIZER_FLAGS
+#     "-fsanitize=address,undefined -fno-omit-frame-pointer"
+# )
+ 
+set(CMAKE_CXX_FLAGS_RELWITHWARNINGS
+    "${CMAKE_CXX_FLAGS_RELWITHWARNINGS} ${_WARN_FLAGS} ${_SANITIZER_FLAGS}"
+    CACHE STRING "Flags used by the RelWithWarnings configuration" FORCE
+)
+set(CMAKE_C_FLAGS_RELWITHWARNINGS
+    "${CMAKE_C_FLAGS_RELWITHWARNINGS} ${_WARN_FLAGS} ${_SANITIZER_FLAGS}"
+    CACHE STRING "Flags used by the RelWithWarnings configuration" FORCE
+)
+
+
 # --- config ---------------------------------------------------------
 
 include(${BASILISK_ROOT}/cmake/detect_compiler.cmake)

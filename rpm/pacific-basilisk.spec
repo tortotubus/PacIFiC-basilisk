@@ -21,6 +21,9 @@ BuildRequires:  make
 Basilisk
 
 %global __spec_build_shell /bin/bash
+%global _hardened_build 0
+%global _lto_cflags %{nil}
+%global _annotated_build 0
 
 %prep
 %autosetup 
@@ -32,7 +35,7 @@ Basilisk
   -DCMAKE_INSTALL_RPATH:STRING= \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF \
   -DBUILD_SHARED_LIBS:BOOL=ON \
-  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DCMAKE_BUILD_TYPE:STRING=Debug \
   -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON 
 %cmake_build 
 
