@@ -13,6 +13,11 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "")
 
 add_executable(qcc-grammar ast/grammar.c)
 
+# Fix for redhat based systems where the default is to build a PIE
+# executable, which we do not want for this utility.
+target_compile_options(qcc-grammar PRIVATE -fno-PIE)
+target_link_options(qcc-grammar PRIVATE -no-pie)
+
 # --- generated grammar.h --------------------------------------------
 
 set(YACC_IN   "${CMAKE_CURRENT_SOURCE_DIR}/ast/basilisk.yacc")
