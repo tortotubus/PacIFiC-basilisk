@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/basiliskTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/basilisk_add_executable.cmake")

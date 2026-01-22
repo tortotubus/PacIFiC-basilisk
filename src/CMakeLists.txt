@@ -36,9 +36,9 @@ add_custom_command(
 # Phony target to make ordering explicit and easy to debug
 add_custom_target(qcc-grammar-utility DEPENDS "${YACC_OUT}")
 
-# --- qcc-install --------------------------------------------------
+# --- qcc --------------------------------------------------
 
-add_executable(qcc-install
+add_executable(qcc
   qcc.c
   include.c
   postproc.c
@@ -58,21 +58,21 @@ add_executable(qcc-install
 )
 
 # Make sure qcc waits for grammar.h generation
-add_dependencies(qcc-install qcc-grammar)
+add_dependencies(qcc qcc-grammar)
 
 # Tell CMake this header is generated (helps IDEs and some generators)
 set_source_files_properties("${YACC_OUT}" PROPERTIES GENERATED TRUE)
 
-add_executable(Basilisk::qcc-install ALIAS qcc-install)
+add_executable(Basilisk::qcc ALIAS qcc)
 
-target_include_directories(qcc-install PRIVATE
+target_include_directories(qcc PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}"
   "${CMAKE_CURRENT_SOURCE_DIR}/ast"
   "${CMAKE_CURRENT_BINARY_DIR}/ast"   # where grammar.h is generated
   "${CMAKE_CURRENT_SOURCE_DIR}/ast/interpreter"
 )
 
-target_compile_definitions(qcc-install PRIVATE
+target_compile_definitions(qcc PRIVATE
   LIBDIR=\"${LIBDIR}\"
   CC99=\"${CC99}\"
   CPP99=\"${CPP99}\"
@@ -80,9 +80,9 @@ target_compile_definitions(qcc-install PRIVATE
   BASILISK=\"${BASILISK}\"
 )
 
-message(STATUS "qcc-install using ${BASILISK}")
+message(STATUS "qcc using ${BASILISK}")
 
-target_link_libraries(qcc-install PRIVATE m)
+target_link_libraries(qcc PRIVATE m)
 
 # --- qcc-toolchain --------------------------------------------------
 

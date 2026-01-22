@@ -46,6 +46,7 @@ Basilisk
 %license src/COPYING
 %{_includedir}/basilisk/*
 %{_bindir}/qcc
+%{_libdir}/cmake/basilisk/*
 
 %changelog
 * Thu Jan 15 2026 Conor Olive - %{version}-%{release}

@@ -100,9 +100,9 @@ endif()
 # to live at the desired include path
 
 set(BASILISK "${CMAKE_INSTALL_FULL_INCLUDEDIR}/basilisk/"
-    CACHE PATH "Root for Basilisk includes used by qcc-install")
+    CACHE PATH "Root for Basilisk includes used by qcc")
 set(LIBDIR "${CMAKE_INSTALL_FULL_INCLUDEDIR}/basilisk/"
-    CACHE PATH "Root for Basilisk libraries used by qcc-install")
+    CACHE PATH "Root for Basilisk libraries used by qcc")
 
 set(BASILISK_SOURCE "${PROJECT_SOURCE_DIR}/src/"
     CACHE PATH "Root for Basilisk includes used by qcc-toolchain")
@@ -117,25 +117,58 @@ mark_as_advanced(BASILISK LIBDIR BASILISK_SOURCE LIBDIR_SOURCE)
 
 add_subdirectory(src)
 
+#
+# Installation + CMake package export
+#
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
-#
-# 
-#  Installation
-#
-#
- 
+set(basilisk_INSTALL_CMAKEDIR
+    "${CMAKE_INSTALL_LIBDIR}/cmake/basilisk"
+    CACHE PATH "CMake package config dir for basilisk")
 
-# Create an alias so qcc-install is installed under the name "qcc"
-install(
-  PROGRAMS $<TARGET_FILE:qcc-install>
-  DESTINATION "${CMAKE_INSTALL_BINDIR}"
-  RENAME qcc
+# --- Install the qcc executable and export it as basilisk::qcc --------------------
+install(TARGETS qcc
+  EXPORT basiliskTargets
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
-# Copy the entire src/ directory into include/basilisk
-install(
-  DIRECTORY "${PROJECT_SOURCE_DIR}/src/"
+# --- Install headers / sources needed as includes --------------------------------
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/src/"
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/basilisk"
   FILES_MATCHING
   PATTERN "*"
-) 
+)
+
+# --- Export targets (basiliskTargets.cmake) ---------------------------------------
+install(EXPORT basiliskTargets
+  FILE basiliskTargets.cmake
+  NAMESPACE basilisk::
+  DESTINATION "${basilisk_INSTALL_CMAKEDIR}"
+)
+
+# --- Install helper CMake modules -------------------------------------------------
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/basilisk_add_executable.cmake"
+  DESTINATION "${basilisk_INSTALL_CMAKEDIR}"
+)
+
+# --- Generate & install basiliskConfig.cmake (+ optional version file) ------------
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/basiliskConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/basiliskConfig.cmake"
+  INSTALL_DESTINATION "${basilisk_INSTALL_CMAKEDIR}"
+)
+
+# Optional but recommended if you set project(VERSION ...)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/basiliskConfigVersion.cmake"
+  VERSION "${PROJECT_VERSION}"
+  COMPATIBILITY SameMajorVersion
+)
+
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/basiliskConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/basiliskConfigVersion.cmake"
+  DESTINATION "${basilisk_INSTALL_CMAKEDIR}"
+)
