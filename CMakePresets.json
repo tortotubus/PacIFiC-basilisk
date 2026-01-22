@@ -26,16 +26,6 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
-    },
-    {
-      "name": "RelWithWarnings",
-      "displayName": "RelWithWarnings",
-      "description": "Custom build with extra warnings enabled.",
-      "inherits": "Default",
-      "binaryDir": "${sourceDir}/build/rel-with-warnings",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithWarnings"
-      }
     }
   ],
   "buildPresets": [
@@ -49,12 +39,6 @@
       "name": "Debug",
       "configurePreset": "Debug",
       "description": "Build the debug configuration",
-      "jobs": 16
-    },
-    {
-      "name": "RelWithWarnings",
-      "configurePreset": "RelWithWarnings",
-      "description": "Build the RelWithWarnings configuration",
       "jobs": 16
     }
   ],

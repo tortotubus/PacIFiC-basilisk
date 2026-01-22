@@ -11,38 +11,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(BASILISK_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 include(GNUInstallDirs)
 
-#
-
-
-set(CMAKE_CXX_FLAGS_RELWITHWARNINGS "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS_RELWITHWARNINGS "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "" FORCE)
- 
-# set(_WARN_FLAGS
-#   "-Werror=return-type \
-#   -Werror=format-security \
-#   -Werror=format=2 \
-#   -Werror=nonnull \
-#   -Werror=array-bounds \
-#   -Werror=stringop-overflow \
-#   -Werror=stringop-truncation \
-#   -Werror=alloc-size-larger-than=9223372036854775807 \
-#   -Werror=address \
-#   -Werror=maybe-uninitialized"
-# )
- 
-# set(_SANITIZER_FLAGS
-#     "-fsanitize=address,undefined -fno-omit-frame-pointer"
-# )
- 
-set(CMAKE_CXX_FLAGS_RELWITHWARNINGS
-    "${CMAKE_CXX_FLAGS_RELWITHWARNINGS} ${_WARN_FLAGS} ${_SANITIZER_FLAGS}"
-    CACHE STRING "Flags used by the RelWithWarnings configuration" FORCE
-)
-set(CMAKE_C_FLAGS_RELWITHWARNINGS
-    "${CMAKE_C_FLAGS_RELWITHWARNINGS} ${_WARN_FLAGS} ${_SANITIZER_FLAGS}"
-    CACHE STRING "Flags used by the RelWithWarnings configuration" FORCE
-)
-
 
 # --- config ---------------------------------------------------------
 
@@ -85,6 +53,8 @@ if(COMP_ID STREQUAL GNU)
       CACHE STRING "Libraries to link against when using CADNA"
   )
 
+  mark_as_advanced(C99_FLAGS CC99 CADNACC CADNALIBS)
+    
 elseif(COMP_ID STREQUAL "Clang")
 
   set(C99_FLAGS
@@ -108,12 +78,15 @@ elseif(COMP_ID STREQUAL "Clang")
       CACHE STRING "Libraries to link against when using CADNA"
   )
 
+  mark_as_advanced(C99_FLAGS CC99 CADNACC CADNALIBS)
+
 elseif(COMP_ID STREQUAL "Intel")
 
   set(CC99
       "icc -std=c99 -D_POSIX_SOURCE -D_BSD_SOURCE"
       CACHE STRING "Command line used by qcc to invoke a C99 compiler"
   )
+  mark_as_advanced(CC99)
 
 endif()
 
@@ -135,6 +108,8 @@ set(BASILISK_SOURCE "${PROJECT_SOURCE_DIR}/src/"
     CACHE PATH "Root for Basilisk includes used by qcc-toolchain")
 set(LIBDIR_SOURCE "${PROJECT_SOURCE_DIR}/src/"
     CACHE PATH "Root for Basilisk libraries used by qcc-toolchain")
+
+mark_as_advanced(BASILISK LIBDIR BASILISK_SOURCE LIBDIR_SOURCE)
 
 #
 # Now, we recurse into the source directory
