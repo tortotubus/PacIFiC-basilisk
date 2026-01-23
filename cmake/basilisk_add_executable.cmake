@@ -7,7 +7,7 @@ function(add_basilisk_executable SOURCE_FILE)
     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${SOURCE_FILE}" "${CMAKE_BINARY_DIR}/${source_name}.c"
-    COMMAND ${QCC_EXECUTABLE}
+    COMMAND $<TARGET_FILE:basilisk::qcc>
       "${source_name}.c"
       -I"${CMAKE_SOURCE_DIR}"
       -DTRACE=2
