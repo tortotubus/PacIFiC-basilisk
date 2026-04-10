@@ -127,10 +127,19 @@ set(basilisk_INSTALL_CMAKEDIR
     "${CMAKE_INSTALL_LIBDIR}/cmake/basilisk"
     CACHE PATH "CMake package config dir for basilisk")
 
-# --- Install the qcc executable and export it as basilisk::qcc --------------------
-install(TARGETS qcc
+install(TARGETS
+  qcc
+  bview2D
+  bview2Dm
+  bview3D
+  fb_tiny
+  glutils
+  tinyrenderer
+  wsserver
   EXPORT basiliskTargets
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
 # --- Install headers / sources needed as includes --------------------------------

@@ -63,7 +63,7 @@ add_dependencies(qcc qcc-grammar)
 # Tell CMake this header is generated (helps IDEs and some generators)
 set_source_files_properties("${YACC_OUT}" PROPERTIES GENERATED TRUE)
 
-add_executable(Basilisk::qcc ALIAS qcc)
+add_executable(basilisk::qcc ALIAS qcc)
 
 target_include_directories(qcc PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -111,7 +111,7 @@ add_dependencies(qcc-toolchain qcc-grammar)
 # Tell CMake this header is generated (helps IDEs and some generators)
 set_source_files_properties("${YACC_OUT}" PROPERTIES GENERATED TRUE)
 
-add_executable(Basilisk::qcc-toolchain ALIAS qcc-toolchain)
+add_executable(basilisk::qcc-toolchain ALIAS qcc-toolchain)
 
 target_include_directories(qcc-toolchain PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -136,3 +136,120 @@ target_compile_options(qcc-toolchain PRIVATE
 message(STATUS "qcc-toolchain using ${BASILISK_SOURCE}")
 
 target_link_libraries(qcc-toolchain PRIVATE m)
+
+# --- gl -------------------------------------------------------------------
+
+add_subdirectory(gl)
+
+# --- bview2D --------------------------------------------------
+
+set(BVIEW2D_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bview2D_gen")
+file(MAKE_DIRECTORY "${BVIEW2D_GEN_DIR}")
+
+add_custom_command(
+  OUTPUT "${BVIEW2D_GEN_DIR}/_bview.c"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${BVIEW2D_GEN_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${CMAKE_CURRENT_SOURCE_DIR}/bview.c" "${BVIEW2D_GEN_DIR}/bview.c"
+  COMMAND $<TARGET_FILE:qcc-toolchain>
+    "bview.c"
+    -I"${CMAKE_SOURCE_DIR}"
+    -source
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bview.c" qcc-toolchain
+  WORKING_DIRECTORY "${BVIEW2D_GEN_DIR}"
+)
+
+add_executable(bview2D "${BVIEW2D_GEN_DIR}/_bview.c")
+
+set_target_properties(bview2D PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
+)
+
+target_include_directories(bview2D PRIVATE
+  "${CMAKE_SOURCE_DIR}"
+)
+
+target_link_libraries(bview2D PRIVATE
+  fb_tiny
+  glutils
+  wsserver
+  m
+)
+
+add_executable(basilisk::bview2D ALIAS bview2D)
+
+# --- bview3D --------------------------------------------------
+
+set(BVIEW3D_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bview3D_gen")
+file(MAKE_DIRECTORY "${BVIEW3D_GEN_DIR}")
+
+add_custom_command(
+  OUTPUT "${BVIEW3D_GEN_DIR}/_bview.c"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${BVIEW3D_GEN_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${CMAKE_CURRENT_SOURCE_DIR}/bview.c" "${BVIEW3D_GEN_DIR}/bview.c"
+  COMMAND $<TARGET_FILE:qcc-toolchain>
+    "bview.c"
+    -I"${CMAKE_SOURCE_DIR}"
+    -grid=octree
+    -source
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bview.c" qcc-toolchain
+  WORKING_DIRECTORY "${BVIEW3D_GEN_DIR}"
+)
+
+add_executable(bview3D "${BVIEW3D_GEN_DIR}/_bview.c")
+
+set_target_properties(bview3D PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
+)
+
+target_include_directories(bview3D PRIVATE
+  "${CMAKE_SOURCE_DIR}"
+)
+
+target_link_libraries(bview3D PRIVATE
+  fb_tiny
+  glutils
+  wsserver
+  m
+)
+
+add_executable(basilisk::bview3D ALIAS bview3D)
+
+# --- bview2Dm --------------------------------------------------
+
+set(BVIEW2DM_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bview2Dm_gen")
+file(MAKE_DIRECTORY "${BVIEW2DM_GEN_DIR}")
+
+add_custom_command(
+  OUTPUT "${BVIEW2DM_GEN_DIR}/_bview.c"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${BVIEW2DM_GEN_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${CMAKE_CURRENT_SOURCE_DIR}/bview.c" "${BVIEW2DM_GEN_DIR}/bview.c"
+  COMMAND $<TARGET_FILE:qcc-toolchain>
+    "bview.c"
+    -I"${CMAKE_SOURCE_DIR}"
+    -grid=multigrid
+    -source
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bview.c" qcc-toolchain
+  WORKING_DIRECTORY "${BVIEW2DM_GEN_DIR}"
+)
+
+add_executable(bview2Dm "${BVIEW2DM_GEN_DIR}/_bview.c")
+
+set_target_properties(bview2Dm PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
+)
+
+target_include_directories(bview2Dm PRIVATE
+  "${CMAKE_SOURCE_DIR}"
+)
+
+target_link_libraries(bview2Dm PRIVATE
+  fb_tiny
+  glutils
+  wsserver
+  m
+)
+
+add_executable(basilisk::bview2Dm ALIAS bview2Dm)
