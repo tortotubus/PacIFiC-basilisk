@@ -45,7 +45,7 @@ set(GOTM_STATIC_LIBRARY_BYPRODUCTS
 )
 
 ExternalProject_Add(gotm_ep
-  GIT_REPOSITORY https://github.com/gitit-testing-organization-123/gotm.git
+  GIT_REPOSITORY https://github.com/PacIFiC-Development-Team/gotm.git
 
   SOURCE_DIR  "${GOTM_SOURCE_DIR}"
   BINARY_DIR  "${CMAKE_BINARY_DIR}/_deps/gotm-build"
