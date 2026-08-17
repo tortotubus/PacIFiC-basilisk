@@ -1,14 +1,18 @@
 include(ExternalProject)
 include(GNUInstallDirs)
 
-set(CVMIX_PREFIX "${CMAKE_BINARY_DIR}/_deps/cvmix-install"
-  CACHE PATH "CVMix install prefix")
+set(_cvmix_default_prefix "${CMAKE_INSTALL_PREFIX}")
+if (DEFINED CVMIX_PREFIX AND CVMIX_PREFIX STREQUAL "${CMAKE_BINARY_DIR}/_deps/cvmix-install")
+  set(CVMIX_PREFIX "${_cvmix_default_prefix}" CACHE PATH "CVMix install prefix" FORCE)
+else()
+  set(CVMIX_PREFIX "${_cvmix_default_prefix}" CACHE PATH "CVMix install prefix")
+endif()
 set(CVMIX_SOURCE_DIR "${CMAKE_BINARY_DIR}/_deps/cvmix-src"
   CACHE PATH "CVMix source tree")
 set(CVMIX_LIBRARY "${CVMIX_PREFIX}/${CMAKE_INSTALL_LIBDIR}/libcvmix.a"
-  CACHE FILEPATH "CVMix static library")
+  CACHE FILEPATH "CVMix static library" FORCE)
 set(CVMIX_INCLUDE_DIR "${CVMIX_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/cvmix"
-  CACHE PATH "CVMix include directory")
+  CACHE PATH "CVMix include directory" FORCE)
 
 ExternalProject_Add(cvmix_ep
   GIT_REPOSITORY https://github.com/CVMix/CVMix-src
@@ -21,6 +25,10 @@ ExternalProject_Add(cvmix_ep
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCVMIX_BUILD_STATIC_LIBS=ON
+    -DCVMIX_BUILD_SHARED_LIBS=OFF
+    -DCVMIX_BUILD_DRIVER=OFF
+    -DCVMIX_USE_NetCDF=OFF
 
   UPDATE_DISCONNECTED 1
   BUILD_ALWAYS OFF

@@ -53,9 +53,11 @@
               gdb
               strace
               doxygen
+              pstoedit
               openmpi
               python3
               swig
+              gsl
               glfw
               libGL
               cudaPackages.cuda_cudart
@@ -64,6 +66,11 @@
               rocmPackages.clr
               rocmPackages.hipcc
               gfortran
+              netcdffortran
+              netcdf
+              hdf5
+              curl
+              zlib
             ];
 
             shellHook = ''

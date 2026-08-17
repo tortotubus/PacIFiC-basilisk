@@ -8,11 +8,17 @@
   gawk,
   bison,
   flex,
+  gsl,
   glfw,
   libGL,
   cudaPackages,
   rocmPackages,
   gfortran,
+  netcdffortran,
+  netcdf,
+  hdf5,
+  curl,
+  zlib,
   openmpi,
   python3,
   swig,
@@ -26,6 +32,7 @@
   pprSupport ? true,
   kdtSupport ? true,
   cvmixSupport ? false,
+  gotmSupport ? false,
 }:
 
 let
@@ -40,6 +47,7 @@ stdenv.mkDerivation {
     + optionalString cudaSupport "-cuda"
     + optionalString hipSupport "-hip"
     + optionalString cvmixSupport "-cvmix"
+    + optionalString gotmSupport "-gotm"
     + optionalString (!pprSupport) "-without-ppr"
     + optionalString (!kdtSupport) "-without-kdt";
 
@@ -56,10 +64,14 @@ stdenv.mkDerivation {
   ]
   ++ optional cudaSupport cudaPackages.cuda_nvcc
   ++ optional hipSupport rocmPackages.hipcc
-  ++ optional (pprSupport || cvmixSupport) gfortran;
+  ++ optional (pprSupport || cvmixSupport || gotmSupport) gfortran
+  ++ optional gotmSupport netcdffortran;
 
   buildInputs =
-    optionals glslSupport [
+    [
+      gsl
+    ]
+    ++ optionals glslSupport [
       glfw
       libGL
     ]
@@ -69,6 +81,13 @@ stdenv.mkDerivation {
     ]
     ++ optionals hipSupport [
       rocmPackages.clr
+    ]
+    ++ optionals gotmSupport [
+      netcdffortran
+      netcdf
+      hdf5
+      curl
+      zlib
     ];
 
   propagatedBuildInputs = [
@@ -81,7 +100,7 @@ stdenv.mkDerivation {
     gifsicle
     stdenv.cc.cc.lib
   ]
-  ++ optional (pprSupport || cvmixSupport) gfortran.cc.lib;
+  ++ optional (pprSupport || cvmixSupport || gotmSupport) gfortran.cc.lib;
 
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=Release"
@@ -91,7 +110,8 @@ stdenv.mkDerivation {
   ++ optional hipSupport "-DBASILISK_USE_HIP=ON"
   ++ optional pprSupport "-DBASILISK_USE_PPR=ON"
   ++ optional kdtSupport "-DBASILISK_USE_KDT=ON"
-  ++ optional cvmixSupport "-DBASILISK_USE_CVMIX=ON";
+  ++ optional cvmixSupport "-DBASILISK_USE_CVMIX=ON"
+  ++ optional gotmSupport "-DBASILISK_USE_GOTM=ON";
 
   passthru = {
     inherit
@@ -101,6 +121,7 @@ stdenv.mkDerivation {
       pprSupport
       kdtSupport
       cvmixSupport
+      gotmSupport
       ;
   };
 

@@ -4,9 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
       - master
-      - relocatable-install
   workflow_dispatch:
 
 jobs:
@@ -19,11 +17,7 @@ jobs:
         include:
           - name: Linux x64
             os: ubuntu-latest
-          - name: macOS Intel
-            os: macos-15-intel
-          - name: macOS ARM
-            os: macos-15
-
+            
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,6 +37,8 @@ jobs:
             gifsicle \
             gnuplot-nox \
             imagemagick \
+            libnetcdf-dev \
+            libnetcdff-dev \
             libopenmpi-dev \
             ninja-build \
             openmpi-bin \
@@ -64,6 +60,8 @@ jobs:
             gifsicle \
             gnuplot \
             imagemagick \
+            netcdf \
+            netcdf-fortran \
             ninja \
             open-mpi \
             pkg-config \
