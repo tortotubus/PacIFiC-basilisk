@@ -26,6 +26,7 @@
       "displayName": "GLSL",
       "description": "Release build with system default generator.",
       "inherits": "Default",
+      "binaryDir": "${sourceDir}/build/release_glsl",
       "cacheVariables": {
         "BASILISK_USE_GLSL": "On"
       }
@@ -35,6 +36,7 @@
       "displayName": "CUDA",
       "description": "Release build with system default generator.",
       "inherits": "Default",
+      "binaryDir": "${sourceDir}/build/release_cuda",
       "cacheVariables": {
         "BASILISK_USE_CUDA": "On"
       }
@@ -44,6 +46,7 @@
       "displayName": "HIP",
       "description": "Release build with system default generator.",
       "inherits": "Default",
+      "binaryDir": "${sourceDir}/build/release_hip",
       "cacheVariables": {
         "BASILISK_USE_HIP": "On"
       }
@@ -62,6 +65,7 @@
       "name": "Test (Release)",
       "displayName": "Test (Release)",
       "description": "Build with debug info and no optimization.",
+      "binaryDir": "${sourceDir}/build/release_test",
       "inherits": "Default",
       "cacheVariables": {
         "BASILISK_USE_TEST": "On"
